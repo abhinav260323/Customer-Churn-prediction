@@ -86,13 +86,14 @@ def predict_churn(request: PredictionRequest):
     )
 
     # Step 4: Convert Senior Citizen values to the format used in training
-    value = input_df.loc[0, "Senior Citizen"]
-
-    if value in (0, "0"):
-        input_df.loc[0, "Senior Citizen"] = "No"
-    elif value in (1, "1"):
-        input_df.loc[0, "Senior Citizen"] = "Yes"
-   
+    input_df["Senior Citizen"] = input_df["Senior Citizen"].map({
+        0: "No",
+        1: "Yes",
+        "0": "No",
+        "1": "Yes",
+        "No": "No",
+        "Yes": "Yes"
+    })
 
     # Step 6: Apply preprocessing
     encoded_data = preprocessor.transform(input_df)
