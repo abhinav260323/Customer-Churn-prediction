@@ -1,0 +1,253 @@
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from 'recharts'
+
+// Customer distribution data
+const customerData = [
+  { name: 'Retained', value: 5163 },
+  { name: 'Churned', value: 1869 },
+]
+
+// Contract-wise customer data
+const contractData = [
+  { contract: 'Month-to-month', Retained: 2220, Churned: 1655 },
+  { contract: 'One year', Retained: 1307, Churned: 166 },
+  { contract: 'Two year', Retained: 1637, Churned: 48 },
+]
+
+// Chart colors
+const COLORS = {
+  Retained: '#60a5fa',
+  Churned: '#a78bfa',
+}
+
+const tooltipStyle = {
+  backgroundColor: '#11172b',
+  border: '1px solid #303b59',
+  borderRadius: '10px',
+  color: '#edf0ff',
+}
+
+function CustomerCharts() {
+  const totalCustomers = customerData.reduce(
+    (total, customer) => total + customer.value,
+    0
+  )
+
+  const churnedCustomers =
+    customerData.find((customer) => customer.name === 'Churned')?.value ?? 0
+
+  const churnRate =
+    totalCustomers > 0
+      ? ((churnedCustomers / totalCustomers) * 100).toFixed(2)
+      : '0.00'
+
+  return (
+    <section className="charts-section">
+      <div className="charts-heading">
+        <p className="eyebrow">CUSTOMER INSIGHTS</p>
+        <h3>Customer Churn Distribution</h3>
+        <p>
+          Explore customer retention and churn patterns in your dataset.
+        </p>
+      </div>
+
+      <div className="chart-grid">
+        {/* Chart 1: Customer distribution */}
+        <article className="chart-card">
+          <div className="chart-title">
+            <h4>Customer Distribution</h4>
+            <p>Retained vs. churned customers</p>
+          </div>
+
+          <div className="pie-chart-container">
+            <ResponsiveContainer width="100%" height={310} minWidth={0}>
+              <PieChart>
+                <Pie
+                  data={customerData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="45%"
+                  innerRadius={55}
+                  outerRadius={95}
+                  paddingAngle={2}
+                  startAngle={90}
+                  endAngle={-270}
+                  stroke="none"
+                  isAnimationActive={false}
+                >
+                  {customerData.map((customer) => (
+                    <Cell
+                      key={customer.name}
+                      fill={COLORS[customer.name]}
+                    />
+                  ))}
+                </Pie>
+
+                <Tooltip
+                  formatter={(value, name) => [
+                    `${Number(value).toLocaleString()} customers`,
+                    name,
+                  ]}
+                  contentStyle={tooltipStyle}
+                  itemStyle={{ color: '#edf0ff' }}
+                />
+
+                <Legend
+                  verticalAlign="bottom"
+                  height={36}
+                  wrapperStyle={{
+                    color: '#cbd4eb',
+                    fontSize: '12px',
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+
+            <div className="pie-center-label">
+              <strong>{totalCustomers.toLocaleString()}</strong>
+              <span>Customers</span>
+            </div>
+          </div>
+
+          <div className="chart-summary">
+            <div>
+              <span className="summary-dot retained-dot" />
+              <span>Retained customers</span>
+              <strong>
+                {customerData[0].value.toLocaleString()}
+              </strong>
+            </div>
+
+            <div>
+              <span className="summary-dot churned-dot" />
+              <span>Churned customers</span>
+              <strong>
+                {customerData[1].value.toLocaleString()}
+              </strong>
+            </div>
+
+            <div>
+              <span className="summary-dot churned-dot" />
+              <span>Overall churn rate</span>
+              <strong>{churnRate}%</strong>
+            </div>
+          </div>
+        </article>
+
+        {/* Chart 2: Churn by contract type */}
+        <article className="chart-card">
+          <div className="chart-title">
+            <h4>Churn by Contract Type</h4>
+            <p>Compare retained and churned customer counts</p>
+          </div>
+
+          <div className="chart-container">
+            <ResponsiveContainer width="100%" height={310} minWidth={0}>
+              <BarChart
+                data={contractData}
+                margin={{
+                  top: 15,
+                  right: 10,
+                  left: 0,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#29324c"
+                  vertical={false}
+                />
+
+                <XAxis
+                  dataKey="contract"
+                  tick={{
+                    fill: '#aab5d0',
+                    fontSize: 11,
+                  }}
+                  axisLine={{ stroke: '#39435e' }}
+                  tickLine={false}
+                  interval={0}
+                />
+
+                <YAxis
+                  tick={{ fill: '#aab5d0', fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={45}
+                />
+
+                <Tooltip
+                  formatter={(value, name) => [
+                    Number(value).toLocaleString(),
+                    name,
+                  ]}
+                  contentStyle={tooltipStyle}
+                  itemStyle={{ color: '#edf0ff' }}
+                />
+
+                <Legend
+                  wrapperStyle={{
+                    color: '#cbd4eb',
+                    fontSize: '12px',
+                  }}
+                />
+
+                <Bar
+                  dataKey="Retained"
+                  name="Retained"
+                  fill={COLORS.Retained}
+                  radius={[5, 5, 0, 0]}
+                  isAnimationActive={false}
+                />
+
+                <Bar
+                  dataKey="Churned"
+                  name="Churned"
+                  fill={COLORS.Churned}
+                  radius={[5, 5, 0, 0]}
+                  isAnimationActive={false}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="chart-summary">
+            <div>
+              <span className="summary-dot retained-dot" />
+              <span>Retained customers</span>
+              <strong>
+                {contractData
+                  .reduce((total, row) => total + row.Retained, 0)
+                  .toLocaleString()}
+              </strong>
+            </div>
+
+            <div>
+              <span className="summary-dot churned-dot" />
+              <span>Churned customers</span>
+              <strong>
+                {contractData
+                  .reduce((total, row) => total + row.Churned, 0)
+                  .toLocaleString()}
+              </strong>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  )
+}
+
+export default CustomerCharts

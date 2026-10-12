@@ -1186,4 +1186,8 @@ select {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  .status.offline { color:#ff8ba0; border-color:rgba(255,100,130,.3); background:rgba(255,100,130,.07); }
+.status.offline::before { background:#ff6482; box-shadow:0 0 10px rgba(255,100,130,.5); }
+.status.checking { color:#aab5d0; }
+.status.checking::before { background:#aab5d0; box-shadow:none;}
 }
